@@ -11,6 +11,11 @@ pipeline {
                 echo "DISABLE_AUTH is ${DISABLE_AUTH}"
             }
         }
+        stage('Stage') {
+            steps {
+                echo "Staging done for ${DB_ENGINE}"\
+            }
+        }
     }
     post {
         always {
