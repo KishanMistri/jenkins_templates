@@ -16,6 +16,24 @@ pipeline {
                 echo "Staging done for ${DB_ENGINE}"\
             }
         }
+        stage('Deploy - Staging') {
+            steps {
+                echo "sh './deploy staging'"
+                echo "sh './run-smoke-tests'"
+            }
+        }
+
+        stage('Sanity check') {
+            steps {
+                input "Does the staging environment look ok?"
+            }
+        }
+
+        stage('Deploy - Production') {
+            steps {
+                echo "sh './deploy production'"
+            }
+        }
     }
     post {
         always {
