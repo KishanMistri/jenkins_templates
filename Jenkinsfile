@@ -11,6 +11,29 @@ pipeline {
                 echo "DISABLE_AUTH is ${DISABLE_AUTH}"
             }
         }
+        stage('Stage') {
+            steps {
+                echo "Staging done for ${DB_ENGINE}"\
+            }
+        }
+        stage('Deploy - Staging') {
+            steps {
+                echo "sh './deploy staging'"
+                echo "sh './run-smoke-tests'"
+            }
+        }
+
+        stage('Sanity check') {
+            steps {
+                input "Does the staging environment look ok?"
+            }
+        }
+
+        stage('Deploy - Production') {
+            steps {
+                echo "sh './deploy production'"
+            }
+        }
     }
     post {
         always {
@@ -21,6 +44,9 @@ pipeline {
         }
         failure {
             echo 'This will run only if failed'
+            mail to: 'nirmabitkishan@gmail.com',
+                subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+                body: "Something is wrong with ${env.BUILD_URL}"
         }
         unstable {
             echo 'This will run only if the run was marked as unstable'
